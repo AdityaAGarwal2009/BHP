@@ -1,8 +1,14 @@
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS
+from flask_cors import CORS  # Add this line
 import pickle
 import numpy as np
 import os
+
+app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
+
+# The rest of your code remains unchanged
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
