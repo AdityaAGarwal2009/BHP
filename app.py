@@ -11,6 +11,9 @@ __locations = __data_columns[3:]
 __model = None
 
 def get_estimated_price(location, sqft, bhk, bath):
+    print(f"Model: {__model}")
+    if __model is None:
+        raise ValueError("Model is not loaded properly")
     try:
         loc_index = __data_columns.index(location.lower())
     except:
@@ -23,7 +26,10 @@ def get_estimated_price(location, sqft, bhk, bath):
     if loc_index >= 0:
         x[loc_index] = 1
 
-    return round(__model.predict([x])[0], 2)
+    print(f"Predicting with: {x}")
+    predicted_price = __model.predict([x])[0]
+    print(f"Predicted price: {predicted_price}")
+    return round(predicted_price, 2)
 
 def get_location_names():
     return __locations
@@ -34,7 +40,7 @@ def load_saved_artifacts():
     try:
         with open("banglore_home_prices_model.pickle", "rb") as f:
             __model = pickle.load(f)
-        print("Model loaded successfully")
+        print("Model loaded successfully: ", __model)
     except FileNotFoundError as e:
         print(f"File not found: {e}")
         raise e
