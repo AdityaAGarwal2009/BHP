@@ -1,81 +1,250 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>House Price Prediction</title>
-    <link rel="stylesheet" href="styles.css">  <!-- Link to your external CSS -->
+    <title>Banglore Home Price Prediction</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300);
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: "Roboto", sans-serif;
+            background-color: #f8f8f8;
+            overflow-y: scroll;
         }
-        h1 {
-            color: #333;
-        }
-        form {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        input {
-            padding: 10px;
+        .img {
+            background: url('https://thevaughnrealestategroup.com/wp-content/uploads/2016/01/AdobeStock_64747679-1350x900.jpeg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: fixed;
             width: 100%;
-            max-width: 300px;
-            margin-bottom: 15px;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            filter: blur(15px);
         }
-        button {
-            padding: 10px 15px;
-            background-color: #28a745;
+        .composer-section {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5) url('https://getwallpapers.com/wallpaper/full/b/8/1/489068.jpg') no-repeat center center/cover;
             color: white;
-            border: none;
+        }
+        .composer-section p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .profile-image {
+            max-width: 150px;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 50%;
+        }
+        .form-section {
+            background: url('https://imageio.forbes.com/specials-images/imageserve/5f594874feb9954c0331bcaf/0x0.jpg?format=jpg&width=1200') no-repeat center center/cover;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+        .form-section h2 {
+            font-size: 22px;
+            color: white;
+            font-weight: bold;
+        }
+        .form-section p, .form-section label {
+            font-size: 16px;
+            color: white;
+            font-weight: bold;
+        }
+        .switch-field {
+            display: flex;
+            margin-bottom: 36px;
+            overflow: hidden;
+        }
+        .switch-field input {
+            position: absolute !important;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            width: 1px;
+            border: 0;
+            overflow: hidden;
+        }
+        .switch-field label {
+            background-color: #e4e4e4;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            line-height: 1;
+            text-align: center;
+            padding: 8px 16px;
+            margin-right: -1px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+            transition: all 0.1s ease-in-out;
+        }
+        .switch-field label:hover {
             cursor: pointer;
         }
-        button:hover {
-            background-color: #218838;
+        .switch-field input:checked + label {
+            background-color: #a5dc86;
+            box-shadow: none;
         }
-        img {
-            max-width: 100%;
-            height: auto;
-            margin: 20px 0;
+        .switch-field label:first-of-type {
+            border-radius: 4px 0 0 4px;
+        }
+        .switch-field label:last-of-type {
+            border-radius: 0 4px 4px 0;
+        }
+        .submit {
+            background: #a5dc86;
+            width: 76%;
+            border: 0;
+            margin: 25px 0 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            height: 35px;
+            cursor: pointer;
+        }
+        .result {
+            background: #dcd686;
+            width: 76%;
+            border: 0;
+            margin: 25px 0 10px;
+            box-sizing: border-box;
+            font-size: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script>
+        function getBathValue() {
+            var uiBathrooms = document.getElementsByName("uiBathrooms");
+            for (var i = 0; i < uiBathrooms.length; i++) {
+                if (uiBathrooms[i].checked) {
+                    return parseInt(uiBathrooms[i].value);
+                }
+            }
+            return -1; // Invalid Value
+        }
+
+        function getBHKValue() {
+            var uiBHK = document.getElementsByName("uiBHK");
+            for (var i = 0; i < uiBHK.length; i++) {
+                if (uiBHK[i].checked) {
+                    return parseInt(uiBHK[i].value);
+                }
+            }
+            return -1; // Invalid Value
+        }
+
+        function onClickedEstimatePrice() {
+            console.log("Estimate price button clicked");
+            var sqft = document.getElementById("uiSqft").value;
+            var bhk = getBHKValue();
+            var bathrooms = getBathValue();
+            var location = document.getElementById("uiLocations").value;
+            var estPrice = document.getElementById("uiEstimatedPrice");
+            var url = "https://bhp-1.onrender.com/predict_home_price"; // Update this to your server URL
+
+            $.ajax({
+                url: url,
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    total_sqft: parseFloat(sqft),
+                    bhk: bhk,
+                    bath: bathrooms,
+                    location: location
+                }),
+                success: function(data) {
+                    estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error occurred: " + error);
+                    estPrice.innerHTML = "<h2>Error: Unable to estimate price</h2>";
+                }
+            });
+        }
+
+        function onPageLoad() {
+            console.log("document loaded");
+            var url = "https://bhp-1.onrender.com/get_location_names"; // Update this to your server URL
+            $.get(url, function(data, status) {
+                console.log("got response for get_location_names request");
+                if(data) {
+                    var locations = data.locations;
+                    var uiLocations = document.getElementById("uiLocations");
+                    $('#uiLocations').empty();
+                    for(var i in locations) {
+                        var opt = new Option(locations[i]);
+                        $('#uiLocations').append(opt);
+                    }
+                }
+            });
+        }
+
+        window.onload = onPageLoad;
+    </script>
 </head>
 <body>
-    <h1>House Price Prediction</h1>
-    
-    <p>Enter the details below to predict the house price:</p>
-    
-    <form action="/predict" method="POST">
-        <label for="total_sqft">Total Square Feet:</label>
-        <input type="number" name="total_sqft" id="total_sqft" required>
-
-        <label for="location">Location:</label>
-        <input type="text" name="location" id="location" required>
-
-        <label for="bhk">BHK:</label>
-        <input type="number" name="bhk" id="bhk" required>
-
-        <label for="bath">Bath:</label>
-        <input type="number" name="bath" id="bath" required>
-
-        <button type="submit">Predict Price</button>
-    </form>
-
-    {% if prediction_text %}
-        <h2>{{ prediction_text }}</h2>
-    {% endif %}
-    
-    <!-- Add your images here -->
-    <img src="path/to/your/image1.jpg" alt="Image 1 Description">
-    <img src="path/to/your/image2.jpg" alt="Image 2 Description">
+    <div class="img"></div>
+    <div class="composer-section">
+        <h1>About Me</h1>
+        <p>Welcome! I am Aditya Agarwal, a passionate AI coder with an unending curiosity for gaming and technology. My work revolves around integrating AI into the creative process, pushing the boundaries of what's possible. I thrive on innovation and enjoy seeing how artificial intelligence can be woven into different facets of our lives. For my recent school event, I built a project that highlights the potential of machine learning. This project features a model based on linear regression to predict housing prices in Bengaluru. It's a practical application that demonstrates not just my technical skills, but also my commitment to solving real-world problems with AI. Through this website, I aim to share my projects, insights, and the journey of my ongoing love affair with technology and coding. Thank you for stopping by and exploring my world of AI.</p>
+        <img src="https://avatars.githubusercontent.com/u/178407300?s=96&v=4" alt="Composer Image" class="profile-image">
+    </div>
+    <div class="form-section">
+        <h1><b>Banglore Home Price Prediction Model</b></h1>
+        <form class="form">
+            <h2>Area (Square Feet)</h2>
+            <input class="area" type="text" id="uiSqft" name="Squareft" value="1000">
+        </form>
+        <form class="form">
+            <h2>BHK</h2>
+            <div class="switch-field">
+                <input type="radio" id="radio-bhk-1" name="uiBHK" value="1"/>
+                <label for="radio-bhk-1">1</label>
+                <input type="radio" id="radio-bhk-2" name="uiBHK" value="2" checked/>
+                <label for="radio-bhk-2">2</label>
+                <input type="radio" id="radio-bhk-3" name="uiBHK" value="3"/>
+                <label for="radio-bhk-3">3</label>
+                <input type="radio" id="radio-bhk-4" name="uiBHK" value="4"/>
+                <label for="radio-bhk-4">4</label>
+                <input type="radio" id="radio-bhk-5" name="uiBHK" value="5"/>
+                <label for="radio-bhk-5">5</label>
+            </div>
+        </form>
+        <form class="form">
+            <h2>Bath</h2>
+            <div class="switch-field">
+                <input type="radio" id="radio-bath-1" name="uiBathrooms" value="1"/>
+                <label for="radio-bath-1">1</label>
+                <input type="radio" id="radio-bath-2" name="uiBathrooms" value="2" checked/>
+                <label for="radio-bath-2">2</label>
+                <input type="radio" id="radio-bath-3" name="uiBathrooms" value="3"/>
+                <label for="radio-bath-3">3</label>
+                <input type="radio" id="radio-bath-4" name="uiBathrooms" value="4"/>
+                <label for="radio-bath-4">4</label>
+                <input type="radio" id="radio-bath-5" name="uiBathrooms" value="5"/>
+                <label for="radio-bath-5">5</label>
+            </div>
+            <h2>Location</h2>
+            <div>
+                <select class="location" id="uiLocations">
+                    <option value="" disabled selected>Choose a Location</option>
+                    <option>Electronic City</option>
+                    <option>Rajaji Nagar</option>
+                </select>
+            </div>
+            <br>
+            <button class="submit" onclick="onClickedEstimatePrice()" type="button">Estimate Price</button>
+            <div id="uiEstimatedPrice" class="result"><h2></h2></div>
+        </form>
+    </div>
 </body>
-</html>
-
-</html>
-
-
