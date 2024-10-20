@@ -122,75 +122,78 @@
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script>
-        function getBathValue() {
-            var uiBathrooms = document.getElementsByName("uiBathrooms");
-            for (var i = 0; i < uiBathrooms.length; i++) {
-                if (uiBathrooms[i].checked) {
-                    return parseInt(uiBathrooms[i].value);
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    function getBathValue() {
+        var uiBathrooms = document.getElementsByName("uiBathrooms");
+        for (var i = 0; i < uiBathrooms.length; i++) {
+            if (uiBathrooms[i].checked) {
+                return parseInt(uiBathrooms[i].value);
+            }
+        }
+        return -1; // Invalid Value
+    }
+
+    function getBHKValue() {
+        var uiBHK = document.getElementsByName("uiBHK");
+        for (var i = 0; i < uiBHK.length; i++) {
+            if (uiBHK[i].checked) {
+                return parseInt(uiBHK[i].value);
+            }
+        }
+        return -1; // Invalid Value
+    }
+
+    function onClickedEstimatePrice() {
+        console.log("Estimate price button clicked");
+        var sqft = document.getElementById("uiSqft").value;
+        var bhk = getBHKValue();
+        var bathrooms = getBathValue();
+        var location = document.getElementById("uiLocations").value;
+        var estPrice = document.getElementById("uiEstimatedPrice");
+        var url = "https://bhp-1.onrender.com/predict_home_price"; // Update this to your server URL
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                total_sqft: parseFloat(sqft),
+                bhk: bhk,
+                bath: bathrooms,
+                location: location
+            }),
+            success: function(data) {
+                estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
+            },
+            error: function(xhr, status, error) {
+                console.error("Error occurred: " + error);
+                estPrice.innerHTML = "<h2>Error: Unable to estimate price</h2>";
+            }
+        });
+    }
+
+    function onPageLoad() {
+        console.log("document loaded");
+        var url = "https://bhp-1.onrender.com/get_location_names"; // Update this to your server URL
+
+        $.get(url, function(data, status) {
+            console.log("got response for get_location_names request");
+            if(data) {
+                var locations = data.locations;
+                var uiLocations = document.getElementById("uiLocations");
+                $('#uiLocations').empty();
+                for(var i in locations) {
+                    var opt = new Option(locations[i]);
+                    $('#uiLocations').append(opt);
                 }
             }
-            return -1; // Invalid Value
-        }
+        });
+    }
 
-        function getBHKValue() {
-            var uiBHK = document.getElementsByName("uiBHK");
-            for (var i = 0; i < uiBHK.length; i++) {
-                if (uiBHK[i].checked) {
-                    return parseInt(uiBHK[i].value);
-                }
-            }
-            return -1; // Invalid Value
-        }
+    window.onload = onPageLoad;
+</script>
 
-        function onClickedEstimatePrice() {
-            console.log("Estimate price button clicked");
-            var sqft = document.getElementById("uiSqft").value;
-            var bhk = getBHKValue();
-            var bathrooms = getBathValue();
-            var location = document.getElementById("uiLocations").value;
-            var estPrice = document.getElementById("uiEstimatedPrice");
-            var url = "https://bhp-1.onrender.com/predict_home_price"; // Update this to your server URL
-
-            $.ajax({
-                url: url,
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify({
-                    total_sqft: parseFloat(sqft),
-                    bhk: bhk,
-                    bath: bathrooms,
-                    location: location
-                }),
-                success: function(data) {
-                    estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error occurred: " + error);
-                    estPrice.innerHTML = "<h2>Error: Unable to estimate price</h2>";
-                }
-            });
-        }
-
-        function onPageLoad() {
-            console.log("document loaded");
-            var url = "https://bhp-1.onrender.com/get_location_names"; // Update this to your server URL
-            $.get(url, function(data, status) {
-                console.log("got response for get_location_names request");
-                if(data) {
-                    var locations = data.locations;
-                    var uiLocations = document.getElementById("uiLocations");
-                    $('#uiLocations').empty();
-                    for(var i in locations) {
-                        var opt = new Option(locations[i]);
-                        $('#uiLocations').append(opt);
-                    }
-                }
-            });
-        }
-
-        window.onload = onPageLoad;
-    </script>
 </head>
 <body>
     <div class="img"></div>
