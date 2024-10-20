@@ -40,7 +40,7 @@ def load_saved_artifacts():
     with open('columns.json','r') as f:
         json_data = json.load(f)
         __data_columns = json.load(f)['data_columns']
-        __locations =json.load(f)['data_columns'][3:]
+        __locations =json_data['data_columns'][3:]
     global __model
     with open("banglore_home_prices_model.pickle","rb") as f:
         __model = pickle.load(f)
