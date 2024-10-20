@@ -14,12 +14,17 @@ def load_saved_artifacts():
     model_path = "banglore_home_prices_model.pickle"
     with open(model_path, "rb") as f:
         __model = pickle.load(f)
+        print("Model loaded successfully.")
 
 def get_estimated_price(location, sqft, bhk, bath):
     try:
         loc_index = __data_columns.index(location.lower())
     except ValueError:
+        print(f"Invalid location: {location}. Valid locations are: {__data_columns[3:]}")  # Add this line
         loc_index = -1
+
+    # Rest of the code...
+
 
     x = np.zeros(len(__data_columns))
     x[__data_columns.index("total_sqft")] = sqft
@@ -44,11 +49,15 @@ def predict_home_price():
         bhk = int(data['bhk'])
         bath = int(data['bath'])
 
+        print(f"Received data: sqft={total_sqft}, location={location}, bhk={bhk}, bath={bath}")  # Add this line
+
         estimated_price = get_estimated_price(location, total_sqft, bhk, bath)
 
         return jsonify({'estimated_price': estimated_price})
     except Exception as e:
+        print(f"Error: {e}")  # Add this line to log the error
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     load_saved_artifacts()
