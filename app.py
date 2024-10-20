@@ -21,18 +21,31 @@ def get_estimated_price(location, sqft, bhk, bath):
     try:
         loc_index = __data_columns.index(location.lower())
     except ValueError:
-        print(f"Invalid location: {location}. Valid locations are: {__data_columns[3:]}")
+        print(f"Invalid location: '{location}'. Valid locations are: {__data_columns[3:]}")
         return None  # Return None for invalid location
 
     x = np.zeros(len(__data_columns))
     x[__data_columns.index("total_sqft")] = sqft
     x[__data_columns.index("bath")] = bath
     x[__data_columns.index("bhk")] = bhk
+    
+    # Check if location index is valid
     if loc_index >= 0:
         x[loc_index] = 1
+    else:
+        print(f"Location index not found for: '{location}'")
+        return None
 
-    predicted_price = __model.predict([x])[0]
-    return round(predicted_price, 2)
+    print(f"Input features for prediction: {x}")  # Debugging statement
+    
+    # Attempt to predict and catch any potential errors
+    try:
+        predicted_price = __model.predict([x])[0]
+        return round(predicted_price, 2)
+    except Exception as e:
+        print(f"Prediction error: {e}")
+        return None
+
 
 def get_location_names():
     return __data_columns[3:]
