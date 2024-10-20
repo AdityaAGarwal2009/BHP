@@ -1,7 +1,7 @@
 import pickle
 import numpy as np
 from flask import Flask, request, jsonify
-
+import os
 app = Flask(__name__)
 
 # Embed columns data directly
@@ -57,10 +57,13 @@ def predict_home_price():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
+
 if __name__ == "__main__":
     print("Starting Python Flask Server For Home Price Prediction...")
     load_saved_artifacts()
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
 
 
 
