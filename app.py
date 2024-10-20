@@ -30,11 +30,18 @@ def get_location_names():
     return __locations
 
 def load_saved_artifacts():
-    print("loading saved artifacts...start")
     global __model
-    with open("banglore_home_prices_model.pickle", "rb") as f:
-        __model = pickle.load(f)
-    print("loading saved artifacts...done")
+    try:
+        with open("banglore_home_prices_model.pickle", "rb") as f:
+            __model = pickle.load(f)
+        print("Model loaded successfully")
+    except FileNotFoundError as e:
+        print(f"File not found: {e}")
+        raise e
+    except Exception as e:
+        print(f"Error loading model: {e}")
+        raise e
+
 
 @app.route('/get_location_names', methods=['GET'])
 def get_location_names_endpoint():
