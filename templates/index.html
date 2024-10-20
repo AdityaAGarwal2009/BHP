@@ -145,34 +145,32 @@
     }
 
     function onClickedEstimatePrice() {
-        console.log("Estimate price button clicked");
-        var sqft = document.getElementById("uiSqft");
-        var bhk = getBHKValue();
-        var bathrooms = getBathValue();
-        var location = document.getElementById("uiLocations");
-        var estPrice = document.getElementById("uiEstimatedPrice");
-        var url = "https://bhp-1.onrender.com/predict_home_price"; // Your API URL
+    var sqft = document.getElementById("uiSqft").value;
+    var bhk = getBHKValue();
+    var bathrooms = getBathValue();
+    var location = document.getElementById("uiLocations").value;
+    var estPrice = document.getElementById("uiEstimatedPrice");
+    var url = "https://bhp-1.onrender.com/predict_home_price"; // Update this as necessary
 
-        $.ajax({
-            type: "POST",
-            url: url,
-            contentType: "application/json",
-            data: JSON.stringify({
-                total_sqft: parseFloat(sqft.value),
-                bhk: bhk,
-                bath: bathrooms,
-                location: location.value
-            }),
-            success: function(data, status) {
-                console.log(data.estimated_price);
-                estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
-            },
-            error: function(xhr, status, error) {
-                console.error("Error:", error);
-                estPrice.innerHTML = "<h2>Error predicting price</h2>";
-            }
-        });
-    }
+    $.ajax({
+        url: url,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+            total_sqft: parseFloat(sqft),
+            bhk: bhk,
+            bath: bathrooms,
+            location: location
+        }),
+        success: function(data) {
+            estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
+        },
+        error: function(xhr, status, error) {
+            console.error("Error occurred: " + error);
+            estPrice.innerHTML = "<h2>Error: Unable to estimate price</h2>";
+        }
+    });
+}
 
     function onPageLoad() {
         console.log("document loaded");
