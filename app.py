@@ -16,15 +16,17 @@ def load_saved_artifacts():
         with open(model_path, "rb") as f:
             __model = pickle.load(f)
             print("Model loaded successfully.")
+    except FileNotFoundError:
+        print(f"Model file not found at: {model_path}")
     except Exception as e:
         print(f"Error loading model: {e}")
 
+
 def get_estimated_price(location, sqft, bhk, bath):
-    try:
-        loc_index = __data_columns.index(location.lower())
-    except ValueError:
-        print(f"Invalid location: '{location}'. Valid locations are: {__data_columns[3:]}")
+    if __model is None:
+        print("Model is not loaded. Cannot predict price.")
         return None
+    # The rest of your existing code...
 
     x = np.zeros(len(__data_columns))
     x[__data_columns.index("total_sqft")] = sqft
