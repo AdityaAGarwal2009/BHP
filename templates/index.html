@@ -124,67 +124,79 @@
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-        function getBathValue() {
-            var uiBathrooms = document.getElementsByName("uiBathrooms");
-            for(var i in uiBathrooms) {
-                if(uiBathrooms[i].checked) {
-                    return parseInt(i)+1;
-                }
+        <script>
+    function getBathValue() {
+        var uiBathrooms = document.getElementsByName("uiBathrooms");
+        for(var i in uiBathrooms) {
+            if(uiBathrooms[i].checked) {
+                return parseInt(i)+1;
             }
-            return -1; // Invalid Value
         }
+        return -1; // Invalid Value
+    }
 
-        function getBHKValue() {
-            var uiBHK = document.getElementsByName("uiBHK");
-            for(var i in uiBHK) {
-                if(uiBHK[i].checked) {
-                    return parseInt(i)+1;
-                }
+    function getBHKValue() {
+        var uiBHK = document.getElementsByName("uiBHK");
+        for(var i in uiBHK) {
+            if(uiBHK[i].checked) {
+                return parseInt(i)+1;
             }
-            return -1; // Invalid Value
         }
+        return -1; // Invalid Value
+    }
 
-        function onClickedEstimatePrice() {
-            console.log("Estimate price button clicked");
-            var sqft = document.getElementById("uiSqft");
-            var bhk = getBHKValue();
-            var bathrooms = getBathValue();
-            var location = document.getElementById("uiLocations");
-            var estPrice = document.getElementById("uiEstimatedPrice");
-            var url = "https://bhp-1.onrender.com/predict_home_price"; // Use this if you are NOT using nginx
+    function onClickedEstimatePrice() {
+        console.log("Estimate price button clicked");
+        var sqft = document.getElementById("uiSqft");
+        var bhk = getBHKValue();
+        var bathrooms = getBathValue();
+        var location = document.getElementById("uiLocations");
+        var estPrice = document.getElementById("uiEstimatedPrice");
+        var url = "https://bhp-1.onrender.com/predict_home_price"; // Your API URL
 
-            $.post(url, {
+        $.ajax({
+            type: "POST",
+            url: url,
+            contentType: "application/json",
+            data: JSON.stringify({
                 total_sqft: parseFloat(sqft.value),
                 bhk: bhk,
                 bath: bathrooms,
                 location: location.value
-            }, function(data, status) {
+            }),
+            success: function(data, status) {
                 console.log(data.estimated_price);
                 estPrice.innerHTML = "<h2>" + data.estimated_price.toString() + " Lakh</h2>";
-                console.log(status);
-            });
-        }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
+                estPrice.innerHTML = "<h2>Error predicting price</h2>";
+            }
+        });
+    }
 
-        function onPageLoad() {
-            console.log( "document loaded" );
-            var url = "https://bhp-1.onrender.com/get_location_names"; // Use this if you are NOT using nginx
+    function onPageLoad() {
+        console.log("document loaded");
+        var url = "https://bhp-1.onrender.com/get_location_names"; // Your API URL
 
-            $.get(url, function(data, status) {
-                console.log("got response for get_location_names request");
-                if(data) {
-                    var locations = data.locations;
-                    var uiLocations = document.getElementById("uiLocations");
-                    $('#uiLocations').empty();
-                    for(var i in locations) {
-                        var opt = new Option(locations[i]);
-                        $('#uiLocations').append(opt);
-                    }
+        $.get(url, function(data, status) {
+            console.log("got response for get_location_names request");
+            if(data) {
+                var locations = data.locations;
+                var uiLocations = document.getElementById("uiLocations");
+                $('#uiLocations').empty();
+                for(var i in locations) {
+                    var opt = new Option(locations[i]);
+                    $('#uiLocations').append(opt);
                 }
-            });
-        }
+            }
+        });
+    }
 
-        window.onload = onPageLoad;
-    </script>
+    window.onload = onPageLoad;
+</script>
+
+    
 
 </head>
 <body>
