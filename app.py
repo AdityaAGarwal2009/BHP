@@ -38,7 +38,10 @@ def load_saved_artifacts():
     global __model
     print("loading saved artifacts...start")
     try:
-        with open("banglore_home_prices_model.pickle", "rb") as f:
+        model_path = "banglore_home_prices_model.pickle"
+        print(f"Model file exists: {os.path.exists(model_path)}")
+        
+        with open(model_path, "rb") as f:
             __model = pickle.load(f)
         print("Model loaded successfully: ", __model)
     except FileNotFoundError as e:
@@ -48,6 +51,7 @@ def load_saved_artifacts():
         print(f"Error loading model: {e}")
         raise e
     print("loading saved artifacts...done")
+
 
 @app.route('/')
 def home():
