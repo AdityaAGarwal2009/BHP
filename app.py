@@ -45,7 +45,8 @@ def load_saved_artifacts():
 
 @app.route('/')
 def home():
-    return "Welcome to the Bangalore Home Price Prediction API. Available endpoints: /get_location_names, /predict_home_price"
+    return render_template('index.html')
+
 
 @app.route('/get_location_names', methods=['GET'])
 def get_location_names_endpoint():
