@@ -32,7 +32,7 @@ def get_location_names():
 def load_saved_artifacts():
     print("loading saved artifacts...start")
     global __model
-    with open("banglore_home_prices_model.pickle", "rb") as f:
+    with open("banglore_home_prices_model.pkl", "rb") as f:
         __model = pickle.load(f)
     print("loading saved artifacts...done")
 
