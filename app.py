@@ -13,8 +13,8 @@ __data_columns = ["total_sqft", "bath", "bhk", "1st block jayanagar", "1st phase
 def load_saved_artifacts():
     global __model
     model_path = "banglore_home_prices_model.pickle"
-    with open(model_path, "rb") as f:
-        __model = pickle.load(f)
+    with open(model_path, "rb") as file:
+        __model = pickle.load(file)
         print("Model loaded successfully.")
 
 def get_estimated_price(location, sqft, bhk, bath):
@@ -73,5 +73,5 @@ def predict_home_price():
 
 if __name__ == "__main__":
     load_saved_artifacts()
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    app.run(debug=True,host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
 
