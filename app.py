@@ -34,7 +34,7 @@ def load_saved_artifacts():
     try:
         with open("banglore_home_prices_model.pickle", "rb") as f:
             __model = pickle.load(f)
-        print(f"Model loaded successfully: {__model}")
+        print("Model loaded successfully")
     except FileNotFoundError as e:
         print(f"File not found: {e}")
         raise e
@@ -42,6 +42,7 @@ def load_saved_artifacts():
         print(f"Error loading model: {e}")
         raise e
     print("loading saved artifacts...done")
+
 
 @app.route('/')
 def home():
