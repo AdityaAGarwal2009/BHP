@@ -59,16 +59,22 @@ def get_location_names_endpoint():
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
 
-@app.route('/predict_home_price', methods=['POST'])
+@app.route('/predict_home_price', methods=['GET', 'POST'])
 def predict_home_price():
     try:
-        total_sqft = float(request.form['total_sqft'])
-        location = request.form['location']
-        bhk = int(request.form['bhk'])
-        bath = int(request.form['bath'])
-        
+        if request.method == 'POST':
+            total_sqft = float(request.form['total_sqft'])
+            location = request.form['location']
+            bhk = int(request.form['bhk'])
+            bath = int(request.form['bath'])
+        elif request.method == 'GET':
+            total_sqft = float(request.args.get('total_sqft'))
+            location = request.args.get('location')
+            bhk = int(request.args.get('bhk'))
+            bath = int(request.args.get('bath'))
+
         estimated_price = get_estimated_price(location, total_sqft, bhk, bath)
-        
+
         response = jsonify({
             'estimated_price': estimated_price
         })
@@ -77,6 +83,7 @@ def predict_home_price():
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Home Price Prediction...")
